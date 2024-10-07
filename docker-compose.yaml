@@ -24,22 +24,16 @@ services:
       - "${GRAFANA_PORT:-3000}:3000"
     volumes:
      - 'grafana_storage:/var/lib/grafana'
-    env_file:
-      - ./grafana/config.monitoring
+     - ./grafana/provisioning/:/etc/grafana/provisioning/
     restart: always
        
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    image: google/cadvisor
     container_name: cadvisor
     volumes:
-      - /:/rootfs:ro                           # Root filesystem
-      - /var/run:/var/run:ro                   # Docker run directory
-      - /sys:/sys:ro                           # System filesystem
-      - /var/lib/docker/:/var/lib/docker:ro    # Docker data directory
-      - /dev/disk/:/dev/disk:ro                # Disk information
-    privileged: true                            # Privileged mode for accessing system metrics
-    devices:
-      - /dev/kmsg  
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - "${CADVISOR_PORT:-8080}:8080"
     restart: always
